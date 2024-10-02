@@ -36,7 +36,30 @@ def read_students_from_file(file_name):
                 students.append(student)
     return students
 
-# แสดงหัวตาราง
+# ฟังก์ชันสำหรับบันทึกข้อมูลนักเรียนลงในไฟล์
+def save_students_to_file(file_name, students):
+    with open(file_name, 'w', encoding='utf-8') as file:
+        for student in students:
+            file.write(f"{student.no} {student.student_id} {student.name} {student.midterm} {student.final} {student.assessment} {student.behavioral}\n")
+
+# ฟังก์ชันสำหรับเพิ่มข้อมูลนักเรียนใหม่
+def add_student(students):
+    no = int(input("กรอกลำดับที่: "))
+    student_id = input("กรอกรหัสนักเรียน: ")
+    name = input("กรอกชื่อ: ")
+    midterm = float(input("กรอกคะแนนกลางภาค: "))
+    final = float(input("กรอกคะแนนปลายภาค: "))
+    assessment = float(input("กรอกคะแนนประเมิน: "))
+    behavioral = float(input("กรอกคะแนนพฤติกรรม: "))
+
+    # สร้าง record ของนักเรียนใหม่
+    new_student = StudentRecord(no, student_id, name, midterm, final, assessment, behavioral)
+
+    # เพิ่ม record ใหม่นี้ในลิสต์
+    students.append(new_student)
+    print(f"เพิ่มข้อมูลนักเรียน {name} สำเร็จแล้ว!")
+
+# ฟังก์ชันสำหรับแสดงหัวตาราง
 def display_students(students):
     print("=" * 90)
     print(f"{'No.':<3} {'ID':<15} {'Name':<20} {'Midterm':<10} {'Final':<10} {'Assessment':<15} {'Behavioral':<10}")
@@ -50,5 +73,20 @@ def display_students(students):
 # อ่านข้อมูลจากไฟล์ 'students.txt'
 students = read_students_from_file('students.txt')
 
-# แสดงข้อมูลนักเรียน
-display_students(students)
+# แสดงเมนูให้ผู้ใช้เลือก
+while True:
+    print("1. แสดงข้อมูลนักเรียน")
+    print("2. เพิ่มข้อมูลนักเรียนใหม่")
+    print("3. บันทึกและออกจากโปรแกรม")
+    choice = input("เลือกตัวเลือก: ")
+
+    if choice == '1':
+        display_students(students)
+    elif choice == '2':
+        add_student(students)
+    elif choice == '3':
+        save_students_to_file('students.txt', students)
+        print("บันทึกข้อมูลสำเร็จและออกจากโปรแกรม")
+        break
+    else:
+        print("เลือกตัวเลือกไม่ถูกต้อง")
