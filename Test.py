@@ -48,3 +48,40 @@ while True:
 #         break
 #     else:
 #         print("เลือกตัวเลือกไม่ถูกต้อง")
+
+
+# menu = ["1. แสดงข้อมูลนักเรียน", 
+#         "2. เพิ่มข้อมูลนักเรียนใหม่",
+#         "3. แก้ไขข้อมูลนักเรียน",  
+#         "4. ลบข้อมูลนักเรียน", 
+#         "5. บันทึกและออกจากโปรแกรม"]
+
+# while True:
+#     print("ใช้ up/down เพื่อเลื่อนขึ้นเลื่อนลง ")
+#     print_menu()
+#     key = keyboard.read_event()
+
+#     if key.event_type == keyboard.KEY_DOWN and key.name == "up":
+#         current_row = (current_row - 1) % len(menu)
+#     elif key.event_type == keyboard.KEY_DOWN and key.name == "down":
+#         current_row = (current_row + 1) % len(menu)
+#     elif key.event_type == keyboard.KEY_DOWN and key.name == "enter":
+#         if current_row == 0:
+#             display_students(students)
+#         elif current_row == 1:
+#             add_student(students)
+#             display_students(students)
+#         elif current_row == 2:
+#             display_students(students)
+#             edit_student(students)  
+#             display_students(students)
+#         elif current_row == 3:
+#             display_students(students)
+#             delete_student(students)
+#             display_students(students)
+#         elif current_row == 4: 
+#             save_students_to_file('students.bin', students) 
+#             print("บันทึกและออกจากโปรแกรม")
+#             break
+#     print("\033c", end="")  
+    # Clear the console for next display
