@@ -186,7 +186,7 @@ def search_student(students):
                 if result:
                     print("ผลการค้นหา:")
                     display_students(result)
-                elif name == "exit":
+                elif student_id == "exit":
                     break
                 else:
                     print("ไม่พบนักเรียนที่มีรหัสนักศึกษานี้")
