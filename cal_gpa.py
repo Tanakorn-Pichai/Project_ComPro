@@ -44,7 +44,10 @@ def save_students_to_file(file_name, students):
 def input_float(prompt, min_val=0, max_val=100):
     while True:
         try:
-            value = float(input(prompt))
+            value = input(prompt)
+            if value.lower() == 'exit':
+                return 'exit'
+            value = float(value)
             if min_val <= value <= max_val:
                 return value
             else:
@@ -60,10 +63,15 @@ def add_student(students):
             no = students[-1].no + 1  # ลำดับถัดไปจากนักเรียนคนสุดท้ายในลิสต์
         else:
             no = 1  # หากลิสต์ว่าง จะให้ลำดับที่เป็น 1
+        print("=" * 130)
         print(f"ลำดับที่ :{no}")
-        
+        print("พิมพ์ 'exit' เพื่อยกเลิก")
+        # รับรหัสนักเรียน ห้ามซ้ำ
         while True:
-            student_id = input("กรอกรหัสนักเรียน: ")
+            student_id = input("กรอกรหัสนักเรียน : ")
+            if student_id.lower() == 'exit':
+                print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+                return
             if any(s.student_id == student_id for s in students):
                 print(f"รหัสนักเรียน {student_id} มีอยู่แล้วในระบบ กรุณากรอกรหัสใหม่")
             else:
@@ -71,16 +79,35 @@ def add_student(students):
         
         # รับชื่อ ห้ามซ้ำ
         while True:
-            name = input("กรอกชื่อ: ")
+            name = input("กรอกชื่อ : ")
+            if name.lower() == 'exit':
+                print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+                return
             if any(s.name == name for s in students):
                 print(f"ชื่อ {name} มีอยู่แล้วในระบบ กรุณากรอกชื่อใหม่")
             else:
                 break
         
-        midterm = input_float("กรอกคะแนนกลางภาค (ไม่เกิน 30 คะแนน): ", 0, 30)
-        final = input_float("กรอกคะแนนปลายภาค (ไม่เกิน 30 คะแนน): ", 0, 30)
-        assessment = input_float("กรอกคะแนนประเมิน (ไม่เกิน 20 คะแนน): ", 0, 20)
-        behavioral = input_float("กรอกคะแนนพฤติกรรม (ไม่เกิน 20 คะแนน): ", 0, 20)
+        # รับคะแนนโดยมีการตรวจสอบ exit
+        midterm = input_float("กรอกคะแนนกลางภาค (ไม่เกิน 30 คะแนน ): ", 0, 30)
+        if midterm == 'exit':
+            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+            return
+
+        final = input_float("กรอกคะแนนปลายภาค (ไม่เกิน 30 คะแนน ): ", 0, 30)
+        if final == 'exit':
+            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+            return
+
+        assessment = input_float("กรอกคะแนนประเมิน (ไม่เกิน 20 คะแนน ): ", 0, 20)
+        if assessment == 'exit':
+            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+            return
+
+        behavioral = input_float("กรอกคะแนนพฤติกรรม (ไม่เกิน 20 คะแนน ): ", 0, 20)
+        if behavioral == 'exit':
+            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+            return
 
         # สร้าง record ของนักเรียนใหม่
         new_student = StudentRecord(no, student_id, name, midterm, final, assessment, behavioral)
@@ -94,20 +121,34 @@ def add_student(students):
 
 # ฟังก์ชันสำหรับลบข้อมูลนักเรียน
 def delete_student(students):
-    student_no = int(input("กรอกลำดับที่ของนักเรียนที่ต้องการลบ: "))
-    
-    # ค้นหาและลบนักเรียนที่มีลำดับที่ตรงกัน
-    for student in students:
-        if student.no == student_no:
-            students.remove(student)
-            print(f"ลบข้อมูลนักเรียนลำดับที่ {student_no} สำเร็จแล้ว!")
+    print("=" * 130)
+    print("พิมพ์ 'exit' เพื่อยกเลิก")
+    while True:
+        user_input = input("กรอกลำดับที่ของนักเรียนที่ต้องการลบ : ")
+        
+        if user_input.lower() == 'exit':
+            print("ยกเลิกการลบข้อมูลนักเรียน")
+            break
+        
+        try:
+            student_no = int(user_input)
+            
+            # ค้นหาและลบนักเรียนที่มีลำดับที่ตรงกัน
+            for student in students:
+                if student.no == student_no:
+                    students.remove(student)
+                    print(f"ลบข้อมูลนักเรียนลำดับที่ {student_no} สำเร็จแล้ว!")
+                    
+                    # อัปเดตลำดับ (no) ของนักเรียนที่เหลือหลังจากการลบ
+                    for i, student in enumerate(students):
+                        student.no = i + 1  # อัปเดตหมายเลขลำดับใหม่ เริ่มต้นที่ 1
+                    return
+            
+            print(f"ไม่พบนักเรียนที่มีลำดับที่ {student_no}")
+        
+        except ValueError:
+            print("กรุณากรอกตัวเลขที่ถูกต้อง")
 
-            # อัปเดตลำดับ (no) ของนักเรียนที่เหลือหลังจากการลบ
-            for i, student in enumerate(students):
-                student.no = i + 1  # อัปเดตหมายเลขลำดับใหม่ เริ่มต้นที่ 1
-            return
-    
-    print(f"ไม่พบนักเรียนที่มีลำดับที่ {student_no}")
 
 # ฟังก์ชันสำหรับคำนวณเกรดจากคะแนนรวม
 def calculate_grade(total_score):
@@ -148,7 +189,7 @@ def display_students(students):
     print("=" * 130)
     print(f"{'Total number of people:':<90} {total_people:<5}")
     print(f"{'Average Total Score:':<90} {average_score:<5.2f}")
-    print("-" * 130)
+    # print("-" * 130)
     
 # ฟังก์ชันสำหรับค้นหานักเรียนตามเงื่อนไขต่างๆ
 def search_student(students):
@@ -218,95 +259,119 @@ students = read_students_from_file('students.bin')
 
 # ฟังก์ชันสำหรับแก้ไขข้อมูลนักเรียน
 def edit_student(students):
-    student_no = int(input("กรอกลำดับที่ของนักเรียนที่ต้องการแก้ไข: "))
-    # ค้นหานักเรียนที่มีลำดับที่ตรงกัน
-    for student in students:
-        if student.no == student_no:
-            print(f"กำลังแก้ไขข้อมูลนักเรียนลำดับที่ {student_no}")
-            print("ถ้าต้องการแก้ไขข้อมูล กรุณากรอกข้อมูลใหม่ ถ้าไม่ต้องการแก้ไข กด Enter เพื่อข้าม")
-
-            # ตรวจสอบว่ารหัสนักเรียนใหม่ไม่ซ้ำกับนักเรียนคนอื่น
-            while True:
-                new_student_id = input(f"รหัสนักเรียน [{student.student_id}]: ") or student.student_id
-                if any(s.student_id == new_student_id and s.no != student_no for s in students):
-                    print(f"รหัสนักเรียน {new_student_id} ซ้ำกับนักเรียนคนอื่น กรุณากรอกรหัสใหม่")
-                else:
-                    break
-
-            # ตรวจสอบว่าชื่อใหม่ไม่ซ้ำกับนักเรียนคนอื่น
-            while True:
-                new_name = input(f"ชื่อ [{student.name}]: ") or student.name
-                if any(s.name == new_name and s.no != student_no for s in students):
-                    print(f"ชื่อ {new_name} ซ้ำกับนักเรียนคนอื่น กรุณากรอกชื่อใหม่")
-                else:
-                    break
-
-            # ป้อนคะแนนกลางภาค ไม่เกิน 30 คะแนน
-            while True:
-                new_midterm = input(f"คะแนนกลางภาค [{student.midterm}]: ")
-                if new_midterm == "" or (0 <= float(new_midterm) <= 30):
-                    new_midterm = float(new_midterm) if new_midterm else student.midterm
-                    break
-                else:
-                    print("กรุณากรอกคะแนนระหว่าง 0 ถึง 30")
-
-            # ป้อนคะแนนปลายภาค ไม่เกิน 30 คะแนน
-            while True:
-                new_final = input(f"คะแนนปลายภาค [{student.final}]: ")
-                if new_final == "" or (0 <= float(new_final) <= 30):
-                    new_final = float(new_final) if new_final else student.final
-                    break
-                else:
-                    print("กรุณากรอกคะแนนระหว่าง 0 ถึง 30")
-
-            # ป้อนคะแนนประเมิน ไม่เกิน 20 คะแนน
-            while True:
-                new_assessment = input(f"คะแนนประเมิน [{student.assessment}]: ")
-                if new_assessment == "" or (0 <= float(new_assessment) <= 20):
-                    new_assessment = float(new_assessment) if new_assessment else student.assessment
-                    break
-                else:
-                    print("กรุณากรอกคะแนนระหว่าง 0 ถึง 20")
-
-            # ป้อนคะแนนพฤติกรรม ไม่เกิน 20 คะแนน
-            while True:
-                new_behavioral = input(f"คะแนนพฤติกรรม [{student.behavioral}]: ")
-                if new_behavioral == "" or (0 <= float(new_behavioral) <= 20):
-                    new_behavioral = float(new_behavioral) if new_behavioral else student.behavioral
-                    break
-                else:
-                    print("กรุณากรอกคะแนนระหว่าง 0 ถึง 20")
-
-            # อัปเดตข้อมูลนักเรียน
-            student.student_id = new_student_id
-            student.name = new_name
-            student.midterm = new_midterm
-            student.final = new_final
-            student.assessment = new_assessment
-            student.behavioral = new_behavioral
-
-            print(f"แก้ไขข้อมูลนักเรียนลำดับที่ {student_no} สำเร็จแล้ว!")
+    print("=" * 130)
+    print("พิมพ์ 'exit' เพื่อยกเลิก")
+    while True:
+        user_input = input("กรอกลำดับที่ของนักเรียนที่ต้องการแก้ไข : ")
+        if user_input.lower() == 'exit':
+            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
             return
 
-    print(f"ไม่พบนักเรียนที่มีลำดับที่ {student_no}")
+        try:
+            student_no = int(user_input)
 
+            # ค้นหานักเรียนที่มีลำดับที่ตรงกัน
+            for student in students:
+                if student.no == student_no:
+                    print(f"กำลังแก้ไขข้อมูลนักเรียนลำดับที่ {student_no}")
+                    print("ถ้าต้องการแก้ไขข้อมูล กรุณากรอกข้อมูลใหม่ ถ้าไม่ต้องการแก้ไข กด Enter เพื่อข้าม")
 
-# แก้ไขเมนูเพื่อเพิ่มตัวเลือกสำหรับแก้ไขข้อมูลนักเรียน
-def print_menu():
-    print("\n")
-    print("=" * 130)
-    print("\nกรุณาเลือกเมนูที่ต้องการ:")
-    for item in menu:
-        print(item)
-menu = ["1. แสดงข้อมูลนักเรียน", 
-        "2. เพิ่มข้อมูลนักเรียนใหม่",
-        "3. แก้ไขข้อมูลนักเรียน",
-        "4. ลบข้อมูลนักเรียน", 
-        "5. ค้นหาข้อมูลนักเรียน",  
-        "6. บันทึกและออกจากโปรแกรม"]
+                    # ตรวจสอบว่ารหัสนักเรียนใหม่ไม่ซ้ำกับนักเรียนคนอื่น
+                    while True:
+                        new_student_id = input(f"รหัสนักเรียน [{student.student_id}]: ") or student.student_id
+                        if new_student_id.lower() == 'exit':
+                            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
+                            return
+                        if any(s.student_id == new_student_id and s.no != student_no for s in students):
+                            print(f"รหัสนักเรียน {new_student_id} ซ้ำกับนักเรียนคนอื่น กรุณากรอกรหัสใหม่")
+                        else:
+                            break
+
+                    # ตรวจสอบว่าชื่อใหม่ไม่ซ้ำกับนักเรียนคนอื่น
+                    while True:
+                        new_name = input(f"ชื่อ [{student.name}]: ") or student.name
+                        if new_name.lower() == 'exit':
+                            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
+                            return
+                        if any(s.name == new_name and s.no != student_no for s in students):
+                            print(f"ชื่อ {new_name} ซ้ำกับนักเรียนคนอื่น กรุณากรอกรชื่อใหม่")
+                        else:
+                            break
+
+                    # ป้อนคะแนนกลางภาค ไม่เกิน 30 คะแนน
+                    while True:
+                        new_midterm = input(f"คะแนนกลางภาค [{student.midterm}]: ")
+                        if new_midterm.lower() == 'exit':
+                            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
+                            return
+                        if new_midterm == "" or (0 <= float(new_midterm) <= 30):
+                            new_midterm = float(new_midterm) if new_midterm else student.midterm
+                            break
+                        else:
+                            print("กรุณากรอกคะแนนระหว่าง 0 ถึง 30")
+
+                    # ป้อนคะแนนปลายภาค ไม่เกิน 30 คะแนน
+                    while True:
+                        new_final = input(f"คะแนนปลายภาค [{student.final}]: ")
+                        if new_final.lower() == 'exit':
+                            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
+                            return
+                        if new_final == "" or (0 <= float(new_final) <= 30):
+                            new_final = float(new_final) if new_final else student.final
+                            break
+                        else:
+                            print("กรุณากรอกคะแนนระหว่าง 0 ถึง 30")
+
+                    # ป้อนคะแนนประเมิน ไม่เกิน 20 คะแนน
+                    while True:
+                        new_assessment = input(f"คะแนนประเมิน [{student.assessment}]: ")
+                        if new_assessment.lower() == 'exit':
+                            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
+                            return
+                        if new_assessment == "" or (0 <= float(new_assessment) <= 20):
+                            new_assessment = float(new_assessment) if new_assessment else student.assessment
+                            break
+                        else:
+                            print("กรุณากรอกคะแนนระหว่าง 0 ถึง 20")
+
+                    # ป้อนคะแนนพฤติกรรม ไม่เกิน 20 คะแนน
+                    while True:
+                        new_behavioral = input(f"คะแนนพฤติกรรม [{student.behavioral}]: ")
+                        if new_behavioral.lower() == 'exit':
+                            print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
+                            return
+                        if new_behavioral == "" or (0 <= float(new_behavioral) <= 20):
+                            new_behavioral = float(new_behavioral) if new_behavioral else student.behavioral
+                            break
+                        else:
+                            print("กรุณากรอกคะแนนระหว่าง 0 ถึง 20")
+
+                    # อัปเดตข้อมูลนักเรียน
+                    student.student_id = new_student_id
+                    student.name = new_name
+                    student.midterm = new_midterm
+                    student.final = new_final
+                    student.assessment = new_assessment
+                    student.behavioral = new_behavioral
+
+                    print(f"แก้ไขข้อมูลนักเรียนลำดับที่ {student_no} สำเร็จแล้ว!")
+                    return
+
+            print(f"ไม่พบนักเรียนที่มีลำดับที่ {student_no}")
+
+        except ValueError:
+            print("กรุณากรอกตัวเลขที่ถูกต้อง")
+
 
 while True:
-    print_menu()
+    print("=" * 130)
+    print("กรุณาเลือกเมนูที่ต้องการ:")
+    print("1. แสดงข้อมูลนักเรียน")
+    print("2. เพิ่มข้อมูลนักเรียนใหม่")
+    print("3. แก้ไขข้อมูลนักเรียน")
+    print("4. ลบข้อมูลนักเรียน")
+    print("5. ค้นหาข้อมูลนักเรียน")
+    print("6. บันทึกและออกจากโปรแกรม")
     print("=" * 130)
     choice = input("เลือกเมนู: ")  # รับค่าปกติจากการพิมพ์
 
