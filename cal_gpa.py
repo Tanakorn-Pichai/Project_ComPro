@@ -100,7 +100,7 @@ def add_student(students):
                 print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
                 return
 
-            assessment = input_float("กรอกคะแนนประเมิน (ไม่เกิน 20 คะแนน ): ", 0, 20)
+            assessment = input_float("กรอกคะแนนงานที่มอบหมาย (ไม่เกิน 20 คะแนน ): ", 0, 20)
             if assessment == 'exit':
                 print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
                 return
@@ -369,9 +369,9 @@ def edit_student(students):
                         else:
                             print("กรุณากรอกคะแนนระหว่าง 0 ถึง 30")
 
-                    # ป้อนคะแนนประเมิน ไม่เกิน 20 คะแนน
+                    # ป้อนคะแนนงานที่มอบหมาย ไม่เกิน 20 คะแนน
                     while True:
-                        new_assessment = input(f"คะแนนประเมิน [{student.assessment}]: ")
+                        new_assessment = input(f"คะแนนงานที่มอบหมาย [{student.assessment}]: ")
                         if new_assessment.lower() == 'exit':
                             print("ยกเลิกการแก้ไขข้อมูลนักเรียน")
                             return
