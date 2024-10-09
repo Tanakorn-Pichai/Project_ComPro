@@ -174,7 +174,7 @@ def report_students(students):
     with open('students.txt', 'w', encoding='utf-8') as file:  # เปิดไฟล์ 'students.txt' เพื่อเขียนข้อมูล
         header = "=" * 150 + "\n"
         title = (f"{'No.':<5} {'ID':<15} {'Name':<30} {'Midterm':>10} {'Final':>10} "
-                 f"{'Assessment':>15} {'Behavioral':>15} {'Total Score':>15} {'Grade':>5}\n")
+                 f"{'Assignment':>15} {'Behavioral':>15} {'Total Score':>15} {'Grade':>5}\n")
         file.write(header)
         file.write(title)
         file.write(header)
@@ -218,7 +218,7 @@ def report_students(students):
 
 def display_students(students):
     print("=" * 160)
-    print(f"{'No.':<3} {'ID':<15} {'Name':<25} {'Midterm':<20} {'Final':<20} {'Assessment':<20} {'Behavioral':<20} ")
+    print(f"{'No.':<3} {'ID':<15} {'Name':<25} {'Midterm':<20} {'Final':<20} {'Assignment':<20} {'Behavioral':<20} ")
     print("=" * 160)
 
     for student in students:
