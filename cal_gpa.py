@@ -172,9 +172,9 @@ def calculate_grade(total_score):
 # ฟังก์ชันสำหรับแสดงข้อมูลนักเรียน รวมถึง Total Score และ Grade
 def report_students(students):
     with open('students.txt', 'w', encoding='utf-8') as file:  # เปิดไฟล์ 'students.txt' เพื่อเขียนข้อมูล
-        header = "=" * 170 + "\n"
+        header = "=" * 150 + "\n"
         title = (f"{'No.':<5} {'ID':<15} {'Name':<30} {'Midterm':>10} {'Final':>10} "
-                 f"{'Assessment':>15} {'Behavioral':>15} {'Total Score':>15} {'Grade':>20}\n")
+                 f"{'Assessment':>15} {'Behavioral':>15} {'Total Score':>15} {'Grade':>5}\n")
         file.write(header)
         file.write(title)
         file.write(header)
@@ -194,7 +194,7 @@ def report_students(students):
             line = (f"{student.no:<5} {student.student_id:<15} {student.name:<30} "
                     f"{student.midterm:>10.1f} {student.final:>10.1f} "
                     f"{student.assessment:>15.1f} {student.behavioral:>15.1f} "
-                    f"{total_score:>15.1f} {grade:>20.1f}\n")
+                    f"{total_score:>15.1f} {grade:>5}\n")
             file.write(line)
             print(line, end='')  # แสดงข้อมูลนักเรียนทางหน้าจอ
             total_scores += total_score
@@ -208,6 +208,7 @@ def report_students(students):
         print(summary, end='')  # แสดงข้อมูลสรุปทางหน้าจอ
 
     print("บันทึกข้อมูลลงในไฟล์ students.txt สำเร็จ")
+
 
 
 
