@@ -59,69 +59,70 @@ def input_float(prompt, min_val=0, max_val=100):
 # ฟังก์ชันสำหรับเพิ่มข้อมูล
 def add_student(students):
     try:
-        if students:
-            no = students[-1].no + 1  # ลำดับถัดไปจากนักเรียนคนสุดท้ายในลิสต์
-        else:
-            no = 1  # หากลิสต์ว่าง จะให้ลำดับที่เป็น 1
-        print("=" * 130)
-        print(f"ลำดับที่ :{no}")
-        print("พิมพ์ 'exit' เพื่อยกเลิก")
-        # รับรหัสนักเรียน ห้ามซ้ำ
         while True:
-            student_id = input("กรอกรหัสนักเรียน : ")
-            if student_id.lower() == 'exit':
+            if students:
+                no = students[-1].no + 1  # ลำดับถัดไปจากนักเรียนคนสุดท้ายในลิสต์
+            else:
+                no = 1  # หากลิสต์ว่าง จะให้ลำดับที่เป็น 1
+            print("=" * 160)
+            print(f"ลำดับที่ :{no}")
+            print("พิมพ์ 'exit' เพื่อยกเลิก")
+            # รับรหัสนักเรียน ห้ามซ้ำ
+            while True:
+                student_id = input("กรอกรหัสนักเรียน : ")
+                if student_id.lower() == 'exit':
+                    print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+                    return
+                if any(s.student_id == student_id for s in students):
+                    print(f"รหัสนักเรียน {student_id} มีอยู่แล้วในระบบ กรุณากรอกรหัสใหม่")
+                else:
+                    break
+            
+            # รับชื่อ ห้ามซ้ำ
+            while True:
+                name = input("กรอกชื่อ : ")
+                if name.lower() == 'exit':
+                    print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+                    return
+                if any(s.name == name for s in students):
+                    print(f"ชื่อ {name} มีอยู่แล้วในระบบ กรุณากรอกชื่อใหม่")
+                else:
+                    break
+            
+            # รับคะแนนโดยมีการตรวจสอบ exit
+            midterm = input_float("กรอกคะแนนกลางภาค (ไม่เกิน 30 คะแนน ): ", 0, 30)
+            if midterm == 'exit':
                 print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
                 return
-            if any(s.student_id == student_id for s in students):
-                print(f"รหัสนักเรียน {student_id} มีอยู่แล้วในระบบ กรุณากรอกรหัสใหม่")
-            else:
-                break
-        
-        # รับชื่อ ห้ามซ้ำ
-        while True:
-            name = input("กรอกชื่อ : ")
-            if name.lower() == 'exit':
+
+            final = input_float("กรอกคะแนนปลายภาค (ไม่เกิน 30 คะแนน ): ", 0, 30)
+            if final == 'exit':
                 print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
                 return
-            if any(s.name == name for s in students):
-                print(f"ชื่อ {name} มีอยู่แล้วในระบบ กรุณากรอกชื่อใหม่")
-            else:
-                break
+
+            assessment = input_float("กรอกคะแนนประเมิน (ไม่เกิน 20 คะแนน ): ", 0, 20)
+            if assessment == 'exit':
+                print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+                return
+
+            behavioral = input_float("กรอกคะแนนพฤติกรรม (ไม่เกิน 20 คะแนน ): ", 0, 20)
+            if behavioral == 'exit':
+                print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
+                return
+
+            # สร้าง record ของนักเรียนใหม่
+            new_student = StudentRecord(no, student_id, name, midterm, final, assessment, behavioral)
+
+            # เพิ่ม record ใหม่นี้ในลิสต์
+            students.append(new_student)
+            print(f"เพิ่มข้อมูลนักเรียน {name} (ลำดับที่ {no}) สำเร็จแล้ว!")
         
-        # รับคะแนนโดยมีการตรวจสอบ exit
-        midterm = input_float("กรอกคะแนนกลางภาค (ไม่เกิน 30 คะแนน ): ", 0, 30)
-        if midterm == 'exit':
-            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
-            return
-
-        final = input_float("กรอกคะแนนปลายภาค (ไม่เกิน 30 คะแนน ): ", 0, 30)
-        if final == 'exit':
-            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
-            return
-
-        assessment = input_float("กรอกคะแนนประเมิน (ไม่เกิน 20 คะแนน ): ", 0, 20)
-        if assessment == 'exit':
-            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
-            return
-
-        behavioral = input_float("กรอกคะแนนพฤติกรรม (ไม่เกิน 20 คะแนน ): ", 0, 20)
-        if behavioral == 'exit':
-            print("ยกเลิกการเพิ่มข้อมูลนักเรียน")
-            return
-
-        # สร้าง record ของนักเรียนใหม่
-        new_student = StudentRecord(no, student_id, name, midterm, final, assessment, behavioral)
-
-        # เพิ่ม record ใหม่นี้ในลิสต์
-        students.append(new_student)
-        print(f"เพิ่มข้อมูลนักเรียน {name} (ลำดับที่ {no}) สำเร็จแล้ว!")
-    
     except Exception as e:
         print(f"เกิดข้อผิดพลาด: {e}")
 
 # ฟังก์ชันสำหรับลบข้อมูลนักเรียน
 def delete_student(students):
-    print("=" * 130)
+    print("=" * 160)
     print("พิมพ์ 'exit' เพื่อยกเลิก")
     while True:
         user_input = input("กรอกลำดับที่ของนักเรียนที่ต้องการลบ : ")
@@ -168,40 +169,73 @@ def calculate_grade(total_score):
         return "D"
     else:
         return "F"
-
 # ฟังก์ชันสำหรับแสดงข้อมูลนักเรียน รวมถึง Total Score และ Grade
+def report_students(students):
+    with open('students.txt', 'w', encoding='utf-8') as file:  # เปิดไฟล์ 'students.txt' เพื่อเขียนข้อมูล
+        header = "=" * 170 + "\n"
+        title = (f"{'No.':<5} {'ID':<15} {'Name':<30} {'Midterm':>10} {'Final':>10} "
+                 f"{'Assessment':>15} {'Behavioral':>15} {'Total Score':>15} {'Grade':>20}\n")
+        file.write(header)
+        file.write(title)
+        file.write(header)
+
+        print(header, end='')  # แสดงส่วนหัวทางหน้าจอ
+        print(title, end='')   # แสดงส่วนหัวของข้อมูลทางหน้าจอ
+        print(header, end='')  # แสดงเส้นคั่นทางหน้าจอ
+
+        total_people = len(students)
+        total_scores = 0
+        for student in students:
+            total_score = (student.midterm + student.final + 
+                           student.assessment + student.behavioral)  # คำนวณคะแนนรวม
+            grade = calculate_grade(total_score)  # คำนวณเกรดจากคะแนนรวม
+
+            # แสดงข้อมูลนักเรียนพร้อม Total Score และ Grade และบันทึกลงไฟล์
+            line = (f"{student.no:<5} {student.student_id:<15} {student.name:<30} "
+                    f"{student.midterm:>10.1f} {student.final:>10.1f} "
+                    f"{student.assessment:>15.1f} {student.behavioral:>15.1f} "
+                    f"{total_score:>15.1f} {grade:>20.1f}\n")
+            file.write(line)
+            print(line, end='')  # แสดงข้อมูลนักเรียนทางหน้าจอ
+            total_scores += total_score
+
+        average_score = total_scores / total_people if total_people > 0 else 0
+        summary = (header + 
+                   f"{'Total number of people:':<90} {total_people:<5}\n"
+                   f"{'Average Total Score:':<90} {average_score:>5.2f}\n")
+        file.write(summary)
+
+        print(summary, end='')  # แสดงข้อมูลสรุปทางหน้าจอ
+
+    print("บันทึกข้อมูลลงในไฟล์ students.txt สำเร็จ")
+
+
+
+
+
+
+
 def display_students(students):
-    print("=" * 130)
-    print(f"{'No.':<3} {'ID':<15} {'Name':<20} {'Midterm':<10} {'Final':<10} {'Assessment':<15} {'Behavioral':<10} {'Total Score':<12} {'Grade':<5}")
-    print("=" * 130)
+    print("=" * 160)
+    print(f"{'No.':<3} {'ID':<15} {'Name':<25} {'Midterm':<20} {'Final':<20} {'Assessment':<20} {'Behavioral':<20} ")
+    print("=" * 160)
 
-    total_people = len(students)
-    total_scores = 0
     for student in students:
-        total_score = student.midterm + student.final + student.assessment + student.behavioral  # คำนวณคะแนนรวม
-        grade = calculate_grade(total_score)  # คำนวณเกรดจากคะแนนรวม
-
         # แสดงข้อมูลนักเรียนพร้อม Total Score และ Grade
-        print(f"{student.no:<3} {student.student_id:<15} {student.name:<20} {student.midterm:<10} {student.final:<10} {student.assessment:<15} {student.behavioral:<10} {total_score:<12} {grade:<5}")
-        total_scores += total_score
+        print(f"{student.no:<3} {student.student_id:<15} {student.name:<25} {student.midterm:<20} {student.final:<20} {student.assessment:<20} {student.behavioral:<20} ")
 
-    average_score = total_scores / total_people if total_people > 0 else 0
-    print("=" * 130)
-    print(f"{'Total number of people:':<90} {total_people:<5}")
-    print(f"{'Average Total Score:':<90} {average_score:<5.2f}")
-    # print("-" * 130)
     
 # ฟังก์ชันสำหรับค้นหานักเรียนตามเงื่อนไขต่างๆ
 def search_student(students):
     while True:
-        print("-" * 130)
+        print("-" * 160)
         print("ค้นหาข้อมูลนักเรียน:")
         print("1. ค้นหาจากชื่อ")
         print("2. ค้นหาจากรหัสนักศึกษา")
         print("3. ค้นหานักเรียนที่มีเกรดสูงที่สุด")
         print("4. ค้นหานักเรียนที่มีเกรดต่ำที่สุด")
         print("5. กลับสู่หน้าหลัก")
-        print("-" * 130)
+        print("-" * 160)
     
         choice = input("เลือกตัวเลือก: ")
 
@@ -209,7 +243,8 @@ def search_student(students):
             while  True:
                 print("'exit' กลับสู่เมนูก่อน ")
                 name = input("กรอกชื่อนักเรียนที่ต้องการค้นหา: ").strip().lower()
-
+                if name == "exit":
+                    break
                 result = [s for s in students if any(char in s.name.lower() for char in name)]
                 if result:
                     print("ผลการค้นหา:")
@@ -234,21 +269,32 @@ def search_student(students):
         
         elif choice == "3":
             if students:
-                # คำนวณเกรดรวม
-                max_student = max(students, key=lambda s: s.midterm + s.final + s.assessment + s.behavioral)
-                print(f"นักเรียนที่มีเกรดสูงที่สุดคือ: {max_student.name}")
-                display_students([max_student])
+                # คำนวณคะแนนรวมสูงสุด
+                max_score = max(s.midterm + s.final + s.assessment + s.behavioral for s in students)
+                
+                # กรองนักเรียนที่มีคะแนนรวมเท่ากับคะแนนสูงสุด
+                top_students = [s for s in students if s.midterm + s.final + s.assessment + s.behavioral == max_score]
+                
+                # แสดงรายชื่อนักเรียนที่มีคะแนนสูงสุด
+                print("นักเรียนที่มีเกรดสูงที่สุดคือ:")
+                display_students(top_students)
             else:
                 print("ไม่มีข้อมูลนักเรียน")
 
         elif choice == "4":
             if students:
-                # คำนวณเกรดรวม
-                min_student = min(students, key=lambda s: s.midterm + s.final + s.assessment + s.behavioral)
-                print(f"นักเรียนที่มีเกรดต่ำที่สุดคือ: {min_student.name}")
-                display_students([min_student])
+                # คำนวณคะแนนรวมสูงสุด
+                min_score = min(s.midterm + s.final + s.assessment + s.behavioral for s in students)
+                
+                # กรองนักเรียนที่มีคะแนนรวมเท่ากับคะแนนสูงสุด
+                min_students = [s for s in students if s.midterm + s.final + s.assessment + s.behavioral == min_score]
+                
+                # แสดงรายชื่อนักเรียนที่มีคะแนนสูงสุด
+                print("นักเรียนที่มีเกรดสูงที่สุดคือ:")
+                display_students(min_students)
             else:
                 print("ไม่มีข้อมูลนักเรียน")
+
         elif choice == "5":
             break
         else:
@@ -259,7 +305,7 @@ students = read_students_from_file('students.bin')
 
 # ฟังก์ชันสำหรับแก้ไขข้อมูลนักเรียน
 def edit_student(students):
-    print("=" * 130)
+    print("=" * 160)
     print("พิมพ์ 'exit' เพื่อยกเลิก")
     while True:
         user_input = input("กรอกลำดับที่ของนักเรียนที่ต้องการแก้ไข : ")
@@ -364,36 +410,42 @@ def edit_student(students):
 
 
 while True:
-    print("=" * 130)
+    print("=" * 160)
     print("กรุณาเลือกเมนูที่ต้องการ:")
-    print("1. แสดงข้อมูลนักเรียน")
-    print("2. เพิ่มข้อมูลนักเรียนใหม่")
-    print("3. แก้ไขข้อมูลนักเรียน")
-    print("4. ลบข้อมูลนักเรียน")
-    print("5. ค้นหาข้อมูลนักเรียน")
-    print("6. บันทึกและออกจากโปรแกรม")
-    print("=" * 130)
+    print("1. เพิ่มข้อมูลนักเรียนใหม่")
+    print("2. แสดงข้อมูลนักเรียน")
+    print("3. ค้นหาข้อมูลนักเรียน")
+    print("4. แก้ไขข้อมูลนักเรียน")
+    print("5. ลบข้อมูลนักเรียน")
+    print("6. แสดงรายงาน")
+    print("7. ออกจากโปรแกรม")
+    print("=" * 160)
     choice = input("เลือกเมนู: ")  # รับค่าปกติจากการพิมพ์
 
     if choice == "1":
         display_students(students)
-    elif choice == "2":
-        display_students(students)
         add_student(students)
         display_students(students)
+        save_students_to_file('students.bin', students) 
+    elif choice == "2":
+        display_students(students)
     elif choice == "3":
+        search_student(students)  # เรียกใช้ฟังก์ชันค้นหาข้อมูลนักเรียน
+    elif choice == "4":
         display_students(students)
         edit_student(students)  # เพิ่มฟังก์ชันแก้ไขข้อมูล
         display_students(students)
-    elif choice == "4":
+        save_students_to_file('students.bin', students) 
+    elif choice == "5":
         display_students(students)
         delete_student(students)
         display_students(students)
-    elif choice == "5":
-        search_student(students)  # เรียกใช้ฟังก์ชันค้นหาข้อมูลนักเรียน
-    elif choice == "6":  # Exit the program
-        save_students_to_file('students.bin', students)  # บันทึกข้อมูลก่อนออกจากโปรแกรม
-        print("บันทึกและออกจากโปรแกรม")
+        save_students_to_file('students.bin', students) 
+    elif choice == "6":
+        report_students(students)
+    elif choice == "7":  # Exit the program
+         # บันทึกข้อมูลก่อนออกจากโปรแกรม
+        print("ออกจากโปรแกรม")
         break
     else:
         print("กรุณาเลือกหมายเลขเมนูที่ถูกต้อง")
