@@ -14,24 +14,25 @@ class StudentRecord:
     def display_info(self):
         print(f"{self.no:<3} {self.student_id:<15} {self.name:<20} {self.midterm:<10} {self.final:<10} {self.assessment:<15} {self.behavioral:<10}")
 
-record_format = 'i15s20s4f'
+record_format = 'i15s60s4f'
 record_size = struct.calcsize(record_format)
 
 def pack_student(student):
     student_id_bytes = student.student_id.encode('utf-8')[:15].ljust(15, b'\x00')
-    name_bytes = student.name.encode('utf-8')[:20].ljust(20, b'\x00')
+    name_bytes = student.name.encode('utf-8')[:60].ljust(60, b'\x00')
     return struct.pack(record_format, student.no, student_id_bytes, name_bytes, student.midterm, student.final, student.assessment, student.behavioral)
 
 def unpack_student(data):
     unpacked_data = struct.unpack(record_format, data)
     no = unpacked_data[0]
-    student_id = unpacked_data[1].decode('utf-8').rstrip('\x00')
-    name = unpacked_data[2].decode('utf-8').rstrip('\x00')
+    student_id = unpacked_data[1].decode('utf-8', errors='replace').rstrip('\x00')
+    name = unpacked_data[2].decode('utf-8', errors='replace').rstrip('\x00')
     midterm = unpacked_data[3]
     final = unpacked_data[4]
     assessment = unpacked_data[5]
     behavioral = unpacked_data[6]
     return StudentRecord(no, student_id, name, midterm, final, assessment, behavioral)
+
 
 def read_students_from_file(file_name):
     students = []
