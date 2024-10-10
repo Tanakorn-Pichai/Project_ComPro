@@ -1,4 +1,4 @@
-import pickle  # ใช้สำหรับการจัดการไฟล์ไบนารี
+import struct
 from dataclasses import dataclass
 
 @dataclass
@@ -11,31 +11,46 @@ class StudentRecord:
     assessment: float
     behavioral: float
 
-    # ฟังก์ชันสำหรับแสดงข้อมูลนักเรียนในรูปแบบตาราง
     def display_info(self):
         print(f"{self.no:<3} {self.student_id:<15} {self.name:<20} {self.midterm:<10} {self.final:<10} {self.assessment:<15} {self.behavioral:<10}")
 
-# ฟังก์ชันสำหรับอ่านข้อมูลจากไฟล์ไบนารี
+record_format = 'i15s20s4f'
+record_size = struct.calcsize(record_format)
+
+def pack_student(student):
+    student_id_bytes = student.student_id.encode('utf-8')[:15].ljust(15, b'\x00')
+    name_bytes = student.name.encode('utf-8')[:20].ljust(20, b'\x00')
+    return struct.pack(record_format, student.no, student_id_bytes, name_bytes, student.midterm, student.final, student.assessment, student.behavioral)
+
+def unpack_student(data):
+    unpacked_data = struct.unpack(record_format, data)
+    no = unpacked_data[0]
+    student_id = unpacked_data[1].decode('utf-8').rstrip('\x00')
+    name = unpacked_data[2].decode('utf-8').rstrip('\x00')
+    midterm = unpacked_data[3]
+    final = unpacked_data[4]
+    assessment = unpacked_data[5]
+    behavioral = unpacked_data[6]
+    return StudentRecord(no, student_id, name, midterm, final, assessment, behavioral)
+
 def read_students_from_file(file_name):
+    students = []
     try:
-        with open(file_name, 'rb') as file:  # ใช้โหมด 'rb' สำหรับอ่านไฟล์ไบนารี
-            students = pickle.load(file)
+        with open(file_name, 'rb') as file:
+            while chunk := file.read(record_size):
+                student = unpack_student(chunk)
+                students.append(student)
     except FileNotFoundError:
         print(f"ไม่พบไฟล์ {file_name} จะเริ่มต้นข้อมูลใหม่")
-        students = []
-    except (EOFError, pickle.UnpicklingError) as e:
-        print(f"เกิดข้อผิดพลาดในการอ่านไฟล์: {e}")
-        students = []
     except Exception as e:
-        print(f"เกิดข้อผิดพลาดอื่น ๆ: {e}")
-        students = []
+        print(f"เกิดข้อผิดพลาด: {e}")
     return students
 
-# ฟังก์ชันสำหรับบันทึกข้อมูลนักเรียนลงในไฟล์ไบนารี
 def save_students_to_file(file_name, students):
     try:
-        with open(file_name, 'wb') as file:  # ใช้โหมด 'wb' สำหรับเขียนไฟล์ไบนารี
-            pickle.dump(students, file)
+        with open(file_name, 'wb') as file:
+            for student in students:
+                file.write(pack_student(student))
         print(f"บันทึกข้อมูลลงในไฟล์ {file_name} สำเร็จ")
     except Exception as e:
         print(f"เกิดข้อผิดพลาดในการบันทึกไฟล์: {e}")
@@ -301,8 +316,7 @@ def search_student(students):
         else:
             print("กรุณาเลือกตัวเลือกที่ถูกต้อง")
 
-# อ่านข้อมูลจากไฟล์ 'students.bin'
-students = read_students_from_file('students.bin')
+
 
 # ฟังก์ชันสำหรับแก้ไขข้อมูลนักเรียน
 def edit_student(students):
@@ -409,6 +423,7 @@ def edit_student(students):
         except ValueError:
             print("กรุณากรอกตัวเลขที่ถูกต้อง")
 
+students = read_students_from_file('students.bin')
 
 while True:
     print("=" * 160)
@@ -450,3 +465,4 @@ while True:
         break
     else:
         print("กรุณาเลือกหมายเลขเมนูที่ถูกต้อง")
+
