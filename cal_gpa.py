@@ -262,7 +262,7 @@ def search_student(students):
                 name = input("กรอกชื่อนักเรียนที่ต้องการค้นหา: ").strip().lower()
                 if name == "exit":
                     break
-                result = [s for s in students if any(char in s.name.lower() for char in name)]
+                result = [s for s in students if s.name.lower() == name]
                 if result:
                     print("ผลการค้นหา:")
                     display_students(result)
